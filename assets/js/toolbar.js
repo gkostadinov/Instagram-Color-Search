@@ -165,7 +165,7 @@ var Toolbar = {
 
         var that = this;
         _.defer(function() {
-            if (!this.noSearch) {
+            if (!that.noSearch) {
                 // If we are not on the landing page, automatically refresh the results
                 that.searchColors();
             }
