@@ -41,8 +41,8 @@ class Application
             // We need to add new ones
             $update = true;
         } else if ($result) {
-            // There are photos added
-            // Fetch them from the database
+            // There are photos in the database
+            // Fetch them
             while ($row = $result->fetch_assoc()){
                 $instagram_photos[] = array(
                     'id' => $row['uid'],

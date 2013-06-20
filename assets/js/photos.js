@@ -3,7 +3,7 @@ var Photos = {
 
     // This is the storage for all Instagram photos in the backend's database
     instagramPhotos: [],
-    // Only these photos here will be shown on the page (filtered)
+    // Only these photos here will be shown on the page
     photosToShow: [],
 
     photoStorage: PhotoStorage,
@@ -29,6 +29,7 @@ var Photos = {
     setPhotos: function() {
         var photos = Application._refineArguments(arguments);
 
+        // Set the array of all Instagram photos
         this.instagramPhotos = photos;
 
         if (!this.photoStorage.getItem('instagramPhotos')) {
@@ -36,6 +37,7 @@ var Photos = {
             this.photoStorage.setItem('instagramPhotos', photos);
         }
 
+        // Mark that we are (re)initializing the photos
         this.initialization = true;
         // Trigger photosShow event to show the photos
         this.trigger('photosShow', photos);
@@ -45,6 +47,7 @@ var Photos = {
         var photos = Application._refineArguments(arguments),
             currentPhotos = this.instagramPhotos;
 
+        // Update the photos array (add new ones)
         _.each(photos, function(photo) {
             var photoId = photo.id,
                 currentPhoto = _(currentPhotos).where({id: photoId});
@@ -55,7 +58,7 @@ var Photos = {
             }
         });
 
-        // Reset all loading buttons and loaders
+        // Reset all loading buttons
         this._removeAllLoaders();
         // And reset the chosen colors in the toolbar
         Toolbar._resetColors();
@@ -84,7 +87,7 @@ var Photos = {
         var photos = Application._refineArguments(arguments),
             that = this;
 
-        // Mark the photos who are going to be shown
+        // Mark the photos that are going to be shown
         this.photosToShow = photos;
 
         if (photos.length === 0) {
@@ -98,7 +101,7 @@ var Photos = {
             });
         }
 
-        // If the photos are not being initialized, reset the Packery plugin
+        // If the photos are not being (re)initialized, reset the Packery plugin
         if (!this.initialization) this._resetPackery();
         this.initialization = false;
     },
@@ -125,14 +128,14 @@ var Photos = {
 
         var that = this;
         $.getJSON(Application.apiUrl + '?method=getInstagramPhotos' + ((update) ? '&params=update' : ''), function(data) {
-            // If new photos are being added to an existing set, update the set (event: photosUpdate)
-            // If a completely new set of photos are fetched, change the set (event: photosChange)
+            // If new photos are being added, update the photo's array (event: photosUpdate)
+            // If a completely new set of photos are fetched, change the photo's array (event: photosChange)
             that.trigger('photos' + ((!update) ? 'Change' : 'Update'), data);
         });
     },
 
     refreshPhotos: function() {
-        // Adds new photos to the set
+        // Adds new photos to the photo's array
         this.getPhotos(true);
     },
 
@@ -164,8 +167,10 @@ var Photos = {
     },
 
     _resetPackery: function() {
+        // Reload the packery items(photos)
         this.$el.packery('reloadItems');
 
+        // And relayout them
         this.$el.packery();
     },
 

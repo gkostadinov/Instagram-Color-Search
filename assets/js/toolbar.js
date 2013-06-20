@@ -41,28 +41,31 @@ var Toolbar = {
 
     clickButton: function(e) {
         e.preventDefault();
+        // The user has clicked the Search button in the landing page
 
-        // Start searching photos matching the input colors
+        // Start searching for photos, matching the input colors
         this.searchColors();
 
         if (this.noSearch) {
-            // If we are still on the landing page, remove it
+            // If we are still on the landing page, remove it and show the filtered results
             $('body').removeClass('no-filter');
 
+            // Mark that we are not in the landing page anymore
             this.noSearch = false;
 
-            // And do some resizing
-            this._resizeChosenColors();
-            Photos.$el.packery();
-            $(window).resize();
+            // Do some resizing
+            this._resizeChosenColors(); // Resize the colors container
+            Photos.$el.packery(); // Relayout the results
+            $(window).resize(); // Trigger resize event for the window object
 
             // Show/hide buttons
-            this.$el.find('#add-more').show();
-            this.$el.find('#search').hide();
+            this.$el.find('#add-more').show(); // Show 'Add more photos' button
+            this.$el.find('#search').hide(); // Hide the search button - the searching will be done automatically now
         }
     },
 
     addMore: function(e) {
+        // The user has clicked on 'Add more photos' button
         if (this.colors.length) {
             // If the user has chosen any colors, reset them
             this._resetColors();
@@ -70,10 +73,9 @@ var Toolbar = {
             Photos._resetPhotos();
         }
 
-        // Start adding new photos
         this.$el.find('#add-more')
-            .addClass('loadingNewPhotos');
-        Photos.refreshPhotos();
+            .addClass('loadingNewPhotos'); // Deactivate the button
+        Photos.refreshPhotos(); // Start adding new photos
     },
 
     clickColor: function(e) {
@@ -92,13 +94,13 @@ var Toolbar = {
             green = $color.data('green'),
             blue = $color.data('blue');
 
-        // The user has removed a color, trigger removeColor event
+        // The user has chosed to remove a color, trigger removeColor event
         this.trigger('removeColor', [red, green, blue]);
     },
 
     resizeEvent: function() {
         if (!this.noSearch) {
-            // If we are not on the landing page, resize the page, so that it is responsible
+            // If we are not in the landing page, resize the page, so that it is responsible
             Photos.$el.css('width', $(document).width() - this.$el.width());
         }
     },
@@ -109,7 +111,7 @@ var Toolbar = {
 
         // The number of colors must not exceed 5
         if (this.colors.length > 4) return;
-        // Add colors which have not been adder before
+        // Check if the chosen color has been added before
         if (this._getColorFromStorage(color).length) return;
 
         // Add it to chosen colors
@@ -123,6 +125,7 @@ var Toolbar = {
         // Resize the colors, so that they are always centered in their container
         this._resizeChosenColors();
 
+        // Show the container if it is not visible
         $chosenColors.show();
 
         if (!this.noSearch) {
@@ -141,17 +144,17 @@ var Toolbar = {
         // Check if there are any colors to remove
         if (this.colors.length === 0) return;
 
-        // Remove the color from the list
+        // Remove the color
         this.colors = _.reject(this.colors, function(color) {
             return chosenColor[0] === color[0] &&
                     chosenColor[1] === color[1] &&
                     chosenColor[2] === color[2];
         });
 
-        // Get the color element and remove it
+        // Get the color element and remove it too
         this._getColorFromEl(this.$el.find('.chosen-colors'), chosenColor).remove();
 
-        // Resize the color element
+        // Resize the colors container
         this._resizeChosenColors();
 
         if (this.colors.length === 0) {
@@ -191,8 +194,8 @@ var Toolbar = {
         // Check if the number of colors is valid
         if (colorsCount <= 0 || colorsCount > 5) {
             if (!this.noSearch) {
-                // If we are not in the landing page, refresh the page by resetting the photos
-                // This method does that when there are not arguments supplied
+                // If we are not in the landing page, refresh the page by resetting the search results (showing all Instagram photos)
+                // This method does that when there are no arguments supplied
                 Photos.getMatchingPhotos();
             } else {
                 // Otherwise prevent any other operations
@@ -216,6 +219,7 @@ var Toolbar = {
     },
 
     _getColorElement: function(color) {
+        // Create a color element
         var $color = $('<li>');
         $color
             .css('background-color', 'rgb('+color[0]+', '+color[1]+', '+color[2]+')')
@@ -225,6 +229,7 @@ var Toolbar = {
     },
 
     _resizeChosenColors: function() {
+        // Make sure the colors are always centered in their container
         var $chosenColors = this.$el.find('.chosen-colors');
 
         $chosenColors.find('ul')
@@ -232,6 +237,7 @@ var Toolbar = {
     },
 
     _getColorFromEl: function($el, color) {
+        // Fetches a specific color element
         return $el.find('ul li').filter(function() {
             var $li = $(this);
             return $li.data('red') === color[0] &&
@@ -241,6 +247,7 @@ var Toolbar = {
     },
 
     _getColorFromStorage: function(color) {
+        // Fetches a specific color from the array of chosen colors
         return _.filter(this.colors, function(c) {
             return color[0] === c[0] &&
                     color[1] === c[1] &&
@@ -249,7 +256,9 @@ var Toolbar = {
     },
 
     _resetColors: function() {
+        // Hide the color's container
         this.$el.find('.chosen-colors').hide().find('ul').html('');
+        // And reset the color's array
         this.colors = [];
     }
 };
