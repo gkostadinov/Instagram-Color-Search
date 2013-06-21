@@ -6,7 +6,7 @@ Color-based search for Instagram using [Imagga's color API](http://imagga.com/te
 This project has a [Python version too](https://github.com/gkostadinov/Instagram-Color-Search-Python).
 
 
-Instalation
+Installation
 ======================
 
 1. Create a new MySQL database. Import the SQL file from the repo.
